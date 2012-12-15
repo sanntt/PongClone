@@ -8,6 +8,8 @@ import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
+import org.andengine.entity.sprite.AnimatedSprite;
+import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.sensor.acceleration.IAccelerationListener;
@@ -20,6 +22,7 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
@@ -99,8 +102,15 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		
 		this.mScene.attachChild(left);
 		this.mScene.attachChild(right);
+		
+		final AnimatedSprite face = new AnimatedSprite(CAMERA_HEIGHT/2, CAMERA_WIDTH/2, this.mCircleFaceTextureRegion, this.getVertexBufferObjectManager());
+		final Body body = PhysicsFactory.createCircleBody(this.mPhysicsWorld, face, BodyType.DynamicBody, FIXTURE_DEF);
+			
 
 		this.mScene.registerUpdateHandler(this.mPhysicsWorld);
+		
+		this.mScene.attachChild(face);
+		this.mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(face, body, true, true));
 
 		return this.mScene;
 		
